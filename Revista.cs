@@ -6,8 +6,8 @@ namespace Biblioteca
 {
     class Revista : ItemBiblioteca
     {
-        public Revista(string nome, int ano) : base(nome, ano) { }
-        public Revista(string nome, int ano, int atraso) : base(nome, ano, atraso) { }
+        public Revista(string nome, int ano, string tipo) : base(nome, ano, tipo) { }
+        public Revista(string nome, int ano, int atraso, string tipo, bool alugado) : base(nome, ano, atraso, tipo, alugado) { }
         public override double CalcularMulta(int atraso)
         {
             return base.CalcularMulta(atraso);
