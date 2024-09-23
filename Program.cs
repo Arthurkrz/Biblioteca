@@ -8,7 +8,6 @@ namespace Biblioteca
         {
             bool loopInicio = true;
             int tamanho = 0;
-            int i = 0;
             while (loopInicio)
             {
                 Console.WriteLine("Bem vindo ao sistema de Biblioteca!\n\nInforme a quantidade de produtos que deseja emprestar:");
@@ -22,8 +21,8 @@ namespace Biblioteca
                 else
                 {
                     Console.Clear();
-                    Console.WriteLine("Resposta inválida.|");
-                    Console.WriteLine(new string('-', 19));
+                    Console.WriteLine("Resposta inválida. |");
+                    Console.WriteLine(new string('-', 20));
                     Console.WriteLine("");
                 }
             }
@@ -33,7 +32,7 @@ namespace Biblioteca
             while (controle)
             {
                 Console.WriteLine("Bem vindo ao sistema de Biblioteca!\n\nSelecione o dígito da operação a ser realizada:\n\n1 - Cadastrar livro;\n" +
-                "2 - Cadastrar revista;\n3 - Cadastrar DVD;\n4 - Realizar empréstimo;\n5 - Consultar empréstimos\n6 - Devolver item;\n7 - Sair.");
+                "2 - Cadastrar revista;\n3 - Cadastrar DVD;\n4 - Realizar empréstimo;\n5 - Consultar empréstimos;\n6 - Devolver item;\n7 - Sair.");
                 int escolha = int.Parse(Console.ReadLine());
                 switch (escolha)
                 {
@@ -50,188 +49,128 @@ namespace Biblioteca
                         AdicionarItem(itens, "DVD");
                         break;
                     case 4:
-                        bool loopEmprestimo = true;
-                        while (loopEmprestimo)
+                        if (ItemBiblioteca.ListaVazia(itens))
                         {
                             Console.Clear();
-                            Console.WriteLine("Itens a serem emprestados:");
-                            for (int k = 0; k < itens.Length; k++)
-                            {
-                                if (itens[k] != null && itens[k].Alugado)
-                                {
-                                    Console.WriteLine($"{k + 1} - {itens[k].Titulo} de {itens[k].Ano};");
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine("Todos os itens foram emprestados!|");
-                                    Console.WriteLine(new string('-', 19));
-                                    loopEmprestimo = false;
-                                }
-                                Console.WriteLine("");
-                                Console.WriteLine(new string('-', 30));
-                                Console.WriteLine("\nInforme o número do item que deseja emprestar:");
-                                int emprestimo = int.Parse(Console.ReadLine()) - 1;
-                                if (emprestimo < itens.Length && emprestimo > 0 && itens[emprestimo] != null && !itens[emprestimo].Alugado)
-                                {
-                                    itensEmprestados[i++] = itens[emprestimo];
-                                    itens[emprestimo].Alugado = true;
-                                    Console.WriteLine("A devolução do item está atrasada em quantos dias?");
-                                    int atraso = int.Parse(Console.ReadLine());
-                                    itens[emprestimo].Atraso = atraso;
-                                    Console.Clear();
-                                    Console.WriteLine("Deseja emprestar outro item ('s'/'n')?");
-                                    string input = Console.ReadLine();
-                                    if (input == "s")
-                                    {
-                                        Console.Clear();
-                                    }
-                                    else
-                                    {
-                                        Console.Clear();
-                                        loopEmprestimo = false;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine("Ocorreu um erro.|");
-                                    Console.WriteLine(new string('-', 19));
-                                    loopEmprestimo = false;
-                                }
-                            }
+                            Console.WriteLine("Não existem itens a serem emprestados! |");
+                            Console.WriteLine(new string('-', 40));
+                            Console.WriteLine("");
+                            break;
+                        }
+                        else
+                        {
+                            Console.Clear();
+                            ItemBiblioteca.Emprestar(itens, itensEmprestados);
                         }
                         break;
                     case 5:
                         Console.Clear();
                         double multaTotal = 0;
+                        if (ItemBiblioteca.ListaVazia(itensEmprestados))
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Nenhum item foi emprestado! |");
+                            Console.WriteLine(new string('-', 29));
+                            Console.WriteLine("");
+                            break;
+                        }
                         for (int l = 0; l < itensEmprestados.Length; l++)
                         {
                             if (itensEmprestados[l] != null)
                             {
                                 double multa = itensEmprestados[l].CalcularMulta(itensEmprestados[l].Atraso);
-                                Console.WriteLine($"{itensEmprestados[l].Tipo} intitulado '{itensEmprestados[l].Titulo} de {itensEmprestados[l].Ano} com multa " +
+                                Console.WriteLine($"{itensEmprestados[l].Tipo} intitulado '{itensEmprestados[l].Titulo}' de {itensEmprestados[l].Ano} com multa " +
                                     $"por atraso de R${multa};\n");
                                 multaTotal += multa;
                             }
-                            Console.WriteLine($"Multa total por atraso de R${multaTotal}.");
                         }
+                        Console.WriteLine($"Multa total por atraso de R${multaTotal}.");
+                        Console.WriteLine(new string('-', 70));
+                        Console.WriteLine("");
                         break;
-                   case 6:
-                        if (ListaVazia(itensEmprestados))
+                    case 6:
+                        if (ItemBiblioteca.ListaVazia(itensEmprestados))
                         {
-                            Console.WriteLine("Não há devoluções a serem feitas!");
+                            Console.Clear();
+                            Console.WriteLine("Não há devoluções a serem feitas! |");
+                            Console.WriteLine(new string('-', 35));
+                            Console.WriteLine("");
                             break;
                         }
-                        bool loopDevolucao = true;
-                        while (loopDevolucao)
+                        else
                         {
-                            for (int l = 0; l < itensEmprestados.Length; l++)
+                            Console.Clear();
+                            bool loopEmprestimo = true;
+                            while (loopEmprestimo)
                             {
-                                if (itensEmprestados[l] != null)
-                                {
-                                    Console.WriteLine($"{l + 1} - '{itensEmprestados[l].Titulo}' de {itensEmprestados[l].Ano} com multa " +
-                                        $"por atraso de R${itensEmprestados[l].CalcularMulta(itensEmprestados[l].Atraso)};\n");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Não há devoluções a serem feitas!");
-                                    loopDevolucao = false;
-                                }
-                            }
-                            Console.WriteLine("Digite o índice do item que deseja devolver:");
-                            int devolucao = int.Parse(Console.ReadLine()) - 1;
-                            if (devolucao < itensEmprestados.Length && devolucao > 0 && itensEmprestados[devolucao] != null)
-                            {
-                                double multa = itensEmprestados[devolucao].CalcularMulta(itensEmprestados[devolucao].Atraso);
-                                itensEmprestados[devolucao] = null;
-                                Console.WriteLine($"Total da multa de atraso de devolução - R${itensEmprestados[devolucao].CalcularMulta(itensEmprestados[devolucao].Atraso)}.\n");
-                                Console.WriteLine("Deseja devolver outro item ('s'/'n')?");
-                                string input = Console.ReadLine();
-                                if (input == "s")
-                                {
-                                    Console.Clear();
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    loopDevolucao = false;
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Ocorreu um erro.|");
-                                loopDevolucao = false;
+                                ItemBiblioteca.Devolver(itensEmprestados);
                             }
                         }
                         break;
-                   case 7:
+                    case 7:
                         Console.Clear();
                         Console.WriteLine("Obrigado por utilizar nosso sistema de Biblioteca!");
                         Environment.Exit(0);
                         break;
-                   default:
+                    default:
                         Console.Clear();
-                        Console.WriteLine("Resposta inválida.|");
-                        Console.WriteLine(new string('-', 19));
+                        Console.WriteLine("Resposta inválida. |");
+                        Console.WriteLine(new string('-', 20));
                         Console.WriteLine("");
                         break;
-                    }
-                static void AdicionarItem(ItemBiblioteca[] array, string tipo)
-                {
-                    for (int j = 0; j < array.Length; j++)
-                    {
-                        if (array[j] == null)
+                        void AdicionarItem(ItemBiblioteca[] array, string tipo)
                         {
-                            Console.WriteLine($"Digite, linha a linha, o nome e o ano do item '{tipo}' a ser adicionado:");
-                            string nome = Console.ReadLine();
-                            int ano = int.Parse(Console.ReadLine());
-                            ItemBiblioteca item;
-                            switch (tipo)
+                            if (ItemBiblioteca.ListaCheia(itens))
                             {
-                                case "Livro":
-                                    item = new Livro(nome, ano, tipo);
-                                    break;
-                                case "Revista":
-                                    item = new Revista(nome, ano, tipo);
-                                    break;
-                                case "DVD":
-                                    item = new DVD(nome, ano, tipo);
-                                    break;
-                                default:
-                                    return;
+                                Console.Clear();
+                                Console.WriteLine("Limite de itens atingido! |");
+                                Console.WriteLine(new string('-', 27));
+                                Console.WriteLine("");
                             }
-                            array[j] = item;
-                            Console.WriteLine($"{tipo} adicionado com sucesso!|");
-                            Console.WriteLine(new string('-', 30));
-                            Console.WriteLine("");
-                            return;
+                            else
+                            {
+                                for (int j = 0; j < array.Length; j++)
+                                {
+                                    if (array[j] == null)
+                                    {
+                                        Console.WriteLine($"Digite, linha a linha, o nome e o ano do item '{tipo}' a ser adicionado:");
+                                        string nome = Console.ReadLine();
+                                        int ano = int.Parse(Console.ReadLine());
+                                        ItemBiblioteca item;
+                                        if (nome != null && ano > 0)
+                                        {
+                                            switch (tipo)
+                                            {
+                                                case "Livro":
+                                                    item = new Livro(nome, ano, tipo);
+                                                    break;
+                                                case "Revista":
+                                                    item = new Revista(nome, ano, tipo);
+                                                    break;
+                                                case "DVD":
+                                                    item = new DVD(nome, ano, tipo);
+                                                    break;
+                                                default:
+                                                    return;
+                                            }
+                                            Console.Clear();
+                                            array[j] = item;
+                                            Console.WriteLine($"{tipo} adicionado com sucesso!");
+                                            Console.WriteLine(new string('-', 30));
+                                            Console.WriteLine("");
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("Ocorreu um erro. |");
+                                            Console.WriteLine(new string('-', 18));
+                                            Console.WriteLine("");
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    }
-                    Console.WriteLine("Limite de itens atingido!|");
-                }
-
-                bool ListaCheia(ItemBiblioteca[] array)
-                {
-                    for (int j = 0; j < array.Length; j++)
-                    {
-                        if (array[j] == null)
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                bool ListaVazia(ItemBiblioteca[] array)
-                {
-                    for (int j = 0; j < array.Length; j++)
-                    {
-                        if (array[j] == null)
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
                 }
             }
         }
